@@ -1,20 +1,14 @@
 defmodule Gtml do
   @moduledoc """
-  Documentation for `Gtml`.
+  No frills component rendering system for HTML in Elixir.
+  Saves HTML files into memory and replaces tags in <@ComponentName> format
+  with the content of ComponentName.html in the initialized folder, recursively
   """
 
-  @doc """
-  Hello world.
-  ## Examples
-
-      iex> Gtml.hello()
-      :world
-
-
-  """
+  require Logger
 
   def start(target_folder \\ ".") do
-    IO.puts("starting GTML")
+    Logger.info("starting GTML")
     :ets.new(:gtml_raw_components, [:set, :protected, :named_table])
     :ets.new(:gtml_components, [:set, :protected, :named_table])
 
@@ -48,8 +42,9 @@ defmodule Gtml do
     case File.read(path) do
       {:ok, fileContent} ->
         component = Path.basename(path, ".html")
-        :ets.insert(:gtml_raw_components, {component, fileContent})
-        {component, fileContent}
+        trimmedContent = String.trim(fileContent)
+        :ets.insert(:gtml_raw_components, {component, trimmedContent})
+        {component, trimmedContent}
     end
   end
 
