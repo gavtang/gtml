@@ -13,12 +13,12 @@ defmodule Gtml do
 
   """
 
-  def start() do
+  def start(target_folder \\ ".") do
     IO.puts("starting GTML")
     :ets.new(:gtml_raw_components, [:set, :protected, :named_table])
     :ets.new(:gtml_components, [:set, :protected, :named_table])
 
-    crawl_folder(".")
+    crawl_folder(target_folder)
     |> Enum.map(&save_raw/1)
     |> Enum.each(fn {component, fileContent} ->
       :ets.insert(:gtml_components, {component, render(fileContent)})
